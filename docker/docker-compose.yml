@@ -1,0 +1,45 @@
+version : "3"
+
+services:
+    mysqldb:
+        build:
+            context: .
+            dockerfile: ./mysql/Dockerfile
+        container_name: mysqldb
+        ports:
+            - 3306:3306
+        # command:
+        # volumes: # 도커파일에서 진행했다.
+        #     - ./db/conf.d:/etc/mysql/conf.d
+        #     - ./db/data:/var/lib/mysql
+ 
+        env_file: ./mysql/db/env
+        environment:
+            # TZ: Asia/Seoul
+
+    api:
+        container_name: api
+        build:
+            context: .
+            dockerfile: ./django/Dockerfile
+        # Django 설정 파일(djangosample/settings.py)에서 불러와 사용하게 
+        environment:
+            - DJANGO_DEBUG=True
+            # - DJANGO_DB_HOST=db
+            - DJANGO_DB_PORT=3306
+            # - DJANGO_DB_NAME=sampledb
+            # - DJANGO_DB_USERNAME=root
+            # - DJANGO_DB_PASSWORD=samplesecret            
+        ports:
+            - 8000:8000
+        volumes :
+            - ../api/:/api/
+        command:
+            - cd /api
+            - python manage.py runserver 0:8000            
+
+
+        
+        
+        
+            
